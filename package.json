@@ -1,0 +1,15 @@
+{
+  "name": "joinfs-ground-height-webcomponent",
+  "version": "0.1.0",
+  "description": "Ground height along a flight track (looked up from a terrain service) and a zoomable altitude-vs-ground chart web component, for JoinFS recordings.",
+  "keywords": ["joinfs", "jfs", "ground-height", "elevation", "agl", "flight-simulator", "web-component", "custom-element"],
+  "license": "CC-BY-NC-SA-4.0",
+  "private": true,
+  "main": "src/joinfs-ground-height.js",
+  "files": ["src", "LICENSE", "NOTICE.md", "README.md"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test",
+    "locales": "node tools/make-locales.cjs"
+  }
+}

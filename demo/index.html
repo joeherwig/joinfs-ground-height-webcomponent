@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>joinfs-ground-height demo</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f4f5f7; --fg: #12141a; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0d0f14; --fg: #e2e8f0; } }
+  :root[data-theme="light"] { --bg: #f4f5f7; --fg: #12141a; color-scheme: light; }
+  :root[data-theme="dark"] { --bg: #0d0f14; --fg: #e2e8f0; color-scheme: dark; }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, sans-serif; }
+  main { max-width: 64rem; margin: 0 auto; }
+  h1 { font-size: 1.2rem; }
+  joinfs-ground-profile { height: 60vh; }
+  .status { opacity: .75; min-height: 1.5em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>joinfs-ground-height</h1>
+  <p class="status" id="status"></p>
+  <joinfs-ground-profile id="chart"></joinfs-ground-profile>
+</main>
+<script src="../src/joinfs-ground-height.js"></script>
+<script>
+  // URL parameters of this demo page: ?lang=de  ?theme=dark|light  ?live (ask the real elevation service, default: a made-up terrain)
+  const params = new URLSearchParams(location.search);
+  const chart = document.getElementById('chart');
+  const status = document.getElementById('status');
+  if (params.get('lang') && chart) chart.setAttribute('lang', params.get('lang'));
+  if (params.get('theme')) document.documentElement.setAttribute('data-theme', params.get('theme'));
+
+  // a made-up one hour flight: climb, cruise over hills, a low pass at 40 min, landing
+  const n = 3600, times = new Float64Array(n), lat = new Float64Array(n), lon = new Float64Array(n), alt = new Float64Array(n);
+  const terrain = (la, lo) => 420 + 260 * Math.sin(lo * 40) + 140 * Math.sin(la * 90 + lo * 25);
+  for (let i = 0; i < n; i++) {
+    times[i] = i; lat[i] = 47.2 + i * 0.00002; lon[i] = 8.2 + i * 0.00009;
+  }
+  for (let i = 0; i < n; i++) {
+    const ground = terrain(lat[i], lon[i]);
+    const cruise = 1800 + 150 * Math.sin(i / 300);
+    const climb = Math.min(1, i / 400), descend = Math.min(1, (n - 1 - i) / 300);
+    const low = Math.exp(-(((i - 2400) / 40) ** 2));            // the low pass
+    const target = ground + 60 + (cruise - ground - 60) * Math.min(climb, descend) * (1 - 0.97 * low);
+    alt[i] = Math.max(target, ground + 5);
+  }
+
+  const provider = params.has('live') ? undefined : async (batch) => batch.map((c) => terrain(c.lat, c.lon));
+  status.textContent = params.has('live') ? 'Asking open-meteo.com for the ground heights…' : 'Made-up terrain (add ?live to use the real elevation service).';
+  JoinfsGroundHeight.computeProfile({ times, lat, lon }, { provider }).then((ground) => {
+    if (chart) {
+      chart.data = { name: 'Demo flight', times, alt, ground: { times: ground.times, height: ground.height } };
+      chart.playhead = 600;
+      chart.addEventListener('seek', (e) => { chart.playhead = e.detail.time; });
+    }
+    status.textContent += ` ${ground.points} positions looked up.`;
+  }).catch((err) => { status.textContent = `Ground height failed (${err.code || ''}): ${err.message}`; });
+</script>
+</body>
+</html>
