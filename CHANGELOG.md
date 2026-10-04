@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The "show everything" button has a left-right arrow icon (the old icon looked like a fullscreen button).
+- Wiki sources in `docs/wiki`.
+
 ## 0.1.0
 
 - `JoinfsGroundHeight`: thinned-out terrain lookup along a track (Open-Meteo by default, or your own provider), interpolation,
