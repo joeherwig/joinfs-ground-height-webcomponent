@@ -432,7 +432,7 @@
           <ul class="legend" id="legend"></ul>
           <div class="tools">
             <button type="button" id="out">−</button><button type="button" id="in">+</button>
-            <button type="button" id="fit">⤢</button><button type="button" id="unit"></button>
+            <button type="button" id="fit"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button><button type="button" id="unit"></button>
           </div>
         </div>
         <div class="plot"><canvas id="cv" tabindex="0" role="img"></canvas></div>

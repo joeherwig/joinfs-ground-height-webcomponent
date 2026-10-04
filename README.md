@@ -20,6 +20,8 @@ On a light page and in German (the language follows the `lang` attribute or the 
 
 ![German, light](docs/screenshots/demo-light-de.png)
 
+More in the [wiki sources](docs/wiki/Home.md): embedding, using the chart, where the heights come from, languages.
+
 ## Use
 
 ```html
